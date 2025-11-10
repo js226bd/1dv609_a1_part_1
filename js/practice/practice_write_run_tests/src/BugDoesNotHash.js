@@ -1,4 +1,5 @@
 class Password {
+  #passwordHash;
   constructor(pw) {
     const trimmedPW = pw.trim(); // Ta bort mellanslag i början och slutet
 
@@ -10,7 +11,7 @@ class Password {
       throw new Error("No number found");
     }
 
-    this.passwordHash = this.#simpleHash(trimmedPW);
+    this.#passwordHash = this.#simpleHash(trimmedPW);
   }
 
   #simpleHash(input) {
@@ -30,7 +31,7 @@ class Password {
   }
 
   getPasswordHash() {
-    return this.passwordHash;
+    return this.#passwordHash;
   }
 
   isPasswordSame(other) {
