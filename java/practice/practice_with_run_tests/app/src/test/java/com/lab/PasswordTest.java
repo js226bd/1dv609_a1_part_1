@@ -26,9 +26,8 @@ public class PasswordTest {
     private IPassword getPassword(String s) throws Exception {
         //return (IPassword) new Password(s);
         //return (IPassword) new BugDoesNotTrim(s);
-        return (IPassword) new BugToShortPassword(s);
-        // return (IPassword) new BugToShortPassword(s);
-        // return (IPassword) new BugVeryShort(s);
+        //return (IPassword) new BugToShortPassword(s);
+        return (IPassword) new BugVeryShort(s);
         // return (IPassword) new BugWrongExceptionMessage(s);
         // return (IPassword) new BugMissingPasswordLengthCheck(s);
         // return (IPassword) new BugMissingNumberCheck(s);
@@ -53,6 +52,13 @@ public class PasswordTest {
     @Test
     public void passwordNotTooShort() throws Exception {
       Exception ex = assertThrows(Exception.class, () -> getPassword("Password123"));
+      assertTrue(ex.getMessage().contains("To short password"));
+    }
+
+    // Checks if password not way too short.
+    @Test
+    public void passwordNotVeryShort() throws Exception {
+      Exception ex = assertThrows(Exception.class, () -> getPassword("Password1"));
       assertTrue(ex.getMessage().contains("To short password"));
     }
 }
