@@ -27,8 +27,8 @@ public class PasswordTest {
         //return (IPassword) new Password(s);
         //return (IPassword) new BugDoesNotTrim(s);
         //return (IPassword) new BugToShortPassword(s);
-        return (IPassword) new BugVeryShort(s);
-        // return (IPassword) new BugWrongExceptionMessage(s);
+        //return (IPassword) new BugVeryShort(s);
+        return (IPassword) new BugWrongExceptionMessage(s);
         // return (IPassword) new BugMissingPasswordLengthCheck(s);
         // return (IPassword) new BugMissingNumberCheck(s);
         // return (IPassword) new BugIsPasswordSameAlwaysTrue(s);
@@ -51,14 +51,19 @@ public class PasswordTest {
     // Checks if password at 11 char is allowed.
     @Test
     public void passwordNotTooShort() throws Exception {
-      Exception ex = assertThrows(Exception.class, () -> getPassword("Password123"));
-      assertTrue(ex.getMessage().contains("To short password"));
+        assertThrows(Exception.class, () -> getPassword("Password123"));
     }
 
     // Checks if password not way too short.
     @Test
     public void passwordNotVeryShort() throws Exception {
-      Exception ex = assertThrows(Exception.class, () -> getPassword("Password1"));
-      assertTrue(ex.getMessage().contains("To short password"));
+        assertThrows(Exception.class, () -> getPassword("Password1"));
+    }
+
+    // Checks if exception message is correct.
+    @Test
+    public void testExceptionMessageIsCorrect() throws Exception {
+        Exception ex = assertThrows(Exception.class, () -> getPassword("Password1"));
+        assertTrue(ex.getMessage().contains("To short password"));
     }
 }
