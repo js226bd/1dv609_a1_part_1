@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PasswordTest {
     private IPassword getPassword(String s) throws Exception {
         //return (IPassword) new Password(s);
-        return (IPassword) new BugDoesNotTrim(s);
-        // return (IPassword) new BugToShortPassword(s);
+        //return (IPassword) new BugDoesNotTrim(s);
+        return (IPassword) new BugToShortPassword(s);
         // return (IPassword) new BugToShortPassword(s);
         // return (IPassword) new BugVeryShort(s);
         // return (IPassword) new BugWrongExceptionMessage(s);
@@ -41,10 +41,18 @@ public class PasswordTest {
         assertTrue(true);
     }
 
+    // Checks if password is trimmed.
     @Test
     public void passwordShouldTrim() throws Exception {
         IPassword password = getPassword("  myPassword123  ");
         IPassword trimmedPassword = getPassword("myPassword123");
         assertEquals(trimmedPassword.getPasswordHash(), password.getPasswordHash());
+    }
+
+    // Checks if password at 11 char is allowed.
+    @Test
+    public void passwordNotTooShort() throws Exception {
+      Exception ex = assertThrows(Exception.class, () -> getPassword("Password123"));
+      assertTrue(ex.getMessage().contains("To short password"));
     }
 }
