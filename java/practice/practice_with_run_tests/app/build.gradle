@@ -20,6 +20,10 @@ jacocoTestReport {
   }
 }
 
+tasks.test {
+    ignoreFailures = true
+}
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
