@@ -28,10 +28,10 @@ public class PasswordTest {
         //return (IPassword) new BugDoesNotTrim(s);
         //return (IPassword) new BugToShortPassword(s);
         //return (IPassword) new BugVeryShort(s);
-        return (IPassword) new BugWrongExceptionMessage(s);
-        // return (IPassword) new BugMissingPasswordLengthCheck(s);
-        // return (IPassword) new BugMissingNumberCheck(s);
-        // return (IPassword) new BugIsPasswordSameAlwaysTrue(s);
+        //return (IPassword) new BugWrongExceptionMessage(s);
+        //return (IPassword) new BugMissingPasswordLengthCheck(s);
+        return (IPassword) new BugMissingNumberCheck(s);
+        // return (IPassword) new BugIsPasswordSameAlwaysTrue(s); 
         // return (IPassword) new BugWrongHashingAlgorithm(s);
     }
 
@@ -42,7 +42,7 @@ public class PasswordTest {
 
     // Checks if password is trimmed.
     @Test
-    public void passwordShouldTrim() throws Exception {
+    public void passwordShouldTrimWhitespacesWhenCreated() throws Exception {
         IPassword password = getPassword("  myPassword123  ");
         IPassword trimmedPassword = getPassword("myPassword123");
         assertEquals(trimmedPassword.getPasswordHash(), password.getPasswordHash());
@@ -50,20 +50,21 @@ public class PasswordTest {
 
     // Checks if password at 11 char is allowed.
     @Test
-    public void passwordNotTooShort() throws Exception {
+    public void passwordShouldThrowExceptionFor11Char() throws Exception {
         assertThrows(Exception.class, () -> getPassword("Password123"));
     }
 
-    // Checks if password not way too short.
+    // Checks if password not way too short, AND if lengthcheck exists.
     @Test
-    public void passwordNotVeryShort() throws Exception {
+    public void passwordShouldThrowExceptionWhenWayToShortOrLengthcheckNonExistent() throws Exception {
         assertThrows(Exception.class, () -> getPassword("Password1"));
     }
 
     // Checks if exception message is correct.
     @Test
-    public void testExceptionMessageIsCorrect() throws Exception {
+    public void exceptionMessageShouldBeCorrectWhenPasswordToShort() throws Exception {
         Exception ex = assertThrows(Exception.class, () -> getPassword("Password1"));
         assertTrue(ex.getMessage().contains("To short password"));
     }
+
 }
