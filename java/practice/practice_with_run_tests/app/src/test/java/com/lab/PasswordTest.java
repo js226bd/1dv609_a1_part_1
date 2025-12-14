@@ -24,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PasswordTest {
     private IPassword getPassword(String s) throws Exception {
-        return (IPassword) new Password(s);
-        // return (IPassword) new BugDoesNotTrim(s);
+        //return (IPassword) new Password(s);
+        return (IPassword) new BugDoesNotTrim(s);
         // return (IPassword) new BugToShortPassword(s);
         // return (IPassword) new BugToShortPassword(s);
         // return (IPassword) new BugVeryShort(s);
@@ -39,5 +39,12 @@ public class PasswordTest {
     @Test
     public void shouldAlwaysPass() throws Exception {
         assertTrue(true);
+    }
+
+    @Test
+    public void passwordShouldTrim() throws Exception {
+        IPassword password = getPassword("  myPassword123  ");
+        IPassword trimmedPassword = getPassword("myPassword123");
+        assertEquals(trimmedPassword.getPasswordHash(), password.getPasswordHash());
     }
 }
