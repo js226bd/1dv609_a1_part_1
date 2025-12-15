@@ -15,6 +15,12 @@ import static org.mockito.Mockito.*;
 public class MockExampleTest {
     
     private SSNHelper mockHelper;
+    private SwedishSocialSecurityNumber getSSN(String ssn) throws Exception {return new SwedishSocialSecurityNumber(ssn, mockHelper);}
+    //private BuggySwedishSocialSecurityNumberNoLenCheck getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberNoLenCheck(ssn, mockHelper);}
+    //private BuggySwedishSocialSecurityNumberNoLuhn getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberNoLuhn(ssn, mockHelper);}
+    //private BuggySwedishSocialSecurityNumberNoTrim getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberNoTrim(ssn, mockHelper);}
+    //private BuggySwedishSocialSecurityNumberWrongYear getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberWrongYear(ssn, mockHelper);}
+
     
     @BeforeEach
     public void setUp() {
@@ -43,5 +49,61 @@ public class MockExampleTest {
         verify(mockHelper).isValidMonth("01");
         verify(mockHelper).isValidDay("01");
         verify(mockHelper).luhnIsCorrect("900101-0017");
+    }
+
+    @Test
+    public void shouldThrowExceptionForNoLenCheck() throws Exception {
+        when(mockHelper.isCorrectLength("900101-001")).thenReturn(false);
+        when(mockHelper.isCorrectFormat("900101-001")).thenReturn(true);
+        when(mockHelper.isValidMonth("01")).thenReturn(true);
+        when(mockHelper.isValidDay("01")).thenReturn(true);
+        when(mockHelper.luhnIsCorrect("900101-001")).thenReturn(true);
+
+        Exception e = assertThrows(Exception.class, () -> {
+            getSSN("900101-001");
+        });
+        assertEquals(e.getMessage(), "To short, must be 11 characters");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenLuhnIsIncorrect() throws Exception {
+        
+        when(mockHelper.isCorrectLength("900101-0017")).thenReturn(true);
+        when(mockHelper.isCorrectFormat("900101-0017")).thenReturn(true);
+        when(mockHelper.isValidMonth("01")).thenReturn(true);
+        when(mockHelper.isValidDay("01")).thenReturn(true);
+        when(mockHelper.luhnIsCorrect("900101-0017")).thenReturn(false);
+        
+        Exception e = assertThrows(Exception.class, () -> {
+            getSSN("900101-0017");
+        });
+        assertEquals(e.getMessage(), "Invalid SSN according to Luhn's algorithm");
+    }
+
+    @Test
+    public void shouldThrowExceptionIfSSNIsNotTrimmed() throws Exception {
+        
+        when(mockHelper.isCorrectLength("900101-0017")).thenReturn(true);
+        when(mockHelper.isCorrectFormat("900101-0017")).thenReturn(false);
+        when(mockHelper.isValidMonth("01")).thenReturn(true);
+        when(mockHelper.isValidDay("01")).thenReturn(true);
+        when(mockHelper.luhnIsCorrect("900101-0017")).thenReturn(true);
+        
+        Exception e = assertThrows(Exception.class, () -> {
+            getSSN("  900101-0017  ");
+        });
+        assertEquals(e.getMessage(), "Incorrect format, must be: YYMMDD-XXXX");
+    }
+
+    @Test
+    public void shouldThrowExceptionIfWrongYear() throws Exception {
+        
+        when(mockHelper.isCorrectLength("900101-0017")).thenReturn(true);
+        when(mockHelper.isCorrectFormat("900101-0017")).thenReturn(true);
+        when(mockHelper.isValidMonth("01")).thenReturn(true);
+        when(mockHelper.isValidDay("01")).thenReturn(true);
+        when(mockHelper.luhnIsCorrect("900101-0017")).thenReturn(true);
+        
+        assertEquals(getSSN("900101-0017").getYear(), "90");
     }
 }
