@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PasswordTest {
     private IPassword getPassword(String s) throws Exception {
-        //return (IPassword) new Password(s);
+        return (IPassword) new Password(s);
         //return (IPassword) new BugDoesNotTrim(s);
         //return (IPassword) new BugToShortPassword(s);
         //return (IPassword) new BugVeryShort(s);
         //return (IPassword) new BugWrongExceptionMessage(s);
-        return (IPassword) new BugMissingPasswordLengthCheck(s);
+        //return (IPassword) new BugMissingPasswordLengthCheck(s);
         //return (IPassword) new BugMissingNumberCheck(s);
         //return (IPassword) new BugIsPasswordSameAlwaysTrue(s); 
         //return (IPassword) new BugWrongHashingAlgorithm(s);
@@ -48,16 +48,11 @@ public class PasswordTest {
         assertEquals(trimmedPassword.getPasswordHash(), password.getPasswordHash());
     }
 
-    // Checks if password at 11 char is allowed.
+    // Checks if password is too short is thrown.
     @Test
-    public void passwordShouldThrowExceptionFor11Char() throws Exception {
-        assertThrows(Exception.class, () -> getPassword("Password123"));
-    }
-
-    // Checks if password not way too short, AND if lengthcheck exists.
-    @Test
-    public void passwordShouldThrowExceptionForVeryShortPassword() throws Exception {
-        assertThrows(Exception.class, () -> getPassword("Password1"));
+    public void passwordShouldThrowExceptionForTooShortPassword() throws Exception {
+        Exception e = assertThrows(Exception.class, () -> getPassword("Password123"));
+        assertEquals("To short password", e.getMessage());
     }
 
     // Checks if exception is thrown when password is entered without number.
