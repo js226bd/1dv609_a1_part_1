@@ -29,10 +29,10 @@ public class PasswordTest {
         //return (IPassword) new BugToShortPassword(s);
         //return (IPassword) new BugVeryShort(s);
         //return (IPassword) new BugWrongExceptionMessage(s);
-        //return (IPassword) new BugMissingPasswordLengthCheck(s);
-        return (IPassword) new BugMissingNumberCheck(s);
-        // return (IPassword) new BugIsPasswordSameAlwaysTrue(s); 
-        // return (IPassword) new BugWrongHashingAlgorithm(s);
+        return (IPassword) new BugMissingPasswordLengthCheck(s);
+        //return (IPassword) new BugMissingNumberCheck(s);
+        //return (IPassword) new BugIsPasswordSameAlwaysTrue(s); 
+        //return (IPassword) new BugWrongHashingAlgorithm(s);
     }
 
     @Test
@@ -56,15 +56,22 @@ public class PasswordTest {
 
     // Checks if password not way too short, AND if lengthcheck exists.
     @Test
-    public void passwordShouldThrowExceptionWhenWayToShortOrLengthcheckNonExistent() throws Exception {
+    public void passwordShouldThrowExceptionForVeryShortPassword() throws Exception {
         assertThrows(Exception.class, () -> getPassword("Password1"));
     }
 
-    // Checks if exception message is correct.
+    // Checks if exception is thrown when password is entered without number.
     @Test
-    public void exceptionMessageShouldBeCorrectWhenPasswordToShort() throws Exception {
-        Exception ex = assertThrows(Exception.class, () -> getPassword("Password1"));
-        assertTrue(ex.getMessage().contains("To short password"));
+    public void exceptionShouldBeThrownForPasswordWithoutNumber() throws Exception {
+        assertThrows(Exception.class, () -> getPassword("PasswordNoNumber"));
+    }
+
+    // Checks if exception is thrown when passwords are not the same.
+    @Test
+    public void isPasswordSameShouldReturnFalseForDifferentPasswords() throws Exception {
+        IPassword pw1 = getPassword("Password1234");
+        IPassword pw2 = getPassword("Password4321");
+        assertFalse(pw1.isPasswordSame(pw2));
     }
 
 }
