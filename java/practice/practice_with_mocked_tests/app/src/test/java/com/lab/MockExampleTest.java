@@ -15,12 +15,13 @@ import static org.mockito.Mockito.*;
 public class MockExampleTest {
     
     private SSNHelper mockHelper;
-    private SwedishSocialSecurityNumber getSSN(String ssn) throws Exception {return new SwedishSocialSecurityNumber(ssn, mockHelper);}
+    //private SwedishSocialSecurityNumber getSSN(String ssn) throws Exception {return new SwedishSocialSecurityNumber(ssn, mockHelper);}
     //private BuggySwedishSocialSecurityNumberNoLenCheck getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberNoLenCheck(ssn, mockHelper);}
     //private BuggySwedishSocialSecurityNumberNoLuhn getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberNoLuhn(ssn, mockHelper);}
     //private BuggySwedishSocialSecurityNumberNoTrim getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberNoTrim(ssn, mockHelper);}
     //private BuggySwedishSocialSecurityNumberWrongYear getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberWrongYear(ssn, mockHelper);}
 
+    private BuggySwedishSocialSecurityNumberWrongMonth getSSN(String ssn) throws Exception {return new BuggySwedishSocialSecurityNumberWrongMonth(ssn, mockHelper);}
     
     @BeforeEach
     public void setUp() {
@@ -105,5 +106,23 @@ public class MockExampleTest {
         when(mockHelper.luhnIsCorrect("900101-0017")).thenReturn(true);
         
         assertEquals(getSSN("900101-0017").getYear(), "90");
+    }
+
+    // Extra Test.
+    @Test
+    public void shouldThrowExceptionIfWrongMonth() throws Exception {
+        
+        when(mockHelper.isCorrectLength("900101-0017")).thenReturn(true);
+        when(mockHelper.isCorrectFormat("900101-0017")).thenReturn(true);
+        when(mockHelper.isValidMonth("01")).thenReturn(true);
+        when(mockHelper.isValidDay("01")).thenReturn(true);
+        when(mockHelper.luhnIsCorrect("900101-0017")).thenReturn(true);
+        
+
+        Exception e = assertThrows(Exception.class, () -> {
+            getSSN("900101-0017");
+        });
+
+        assertEquals(e.getMessage(), "Invalid month in SSN");
     }
 }
